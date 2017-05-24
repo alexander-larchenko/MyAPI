@@ -15,7 +15,7 @@
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "TEST CHANGE",
+            "description" : "Revert change from site",
             "schema" : {
               "$ref" : "#/definitions/User"
             }
