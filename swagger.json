@@ -1,0 +1,64 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "version" : "1.0.0",
+    "title" : "my sample api",
+    "description" : "description"
+  },
+  "host" : "virtserver.swaggerhub.com",
+  "basePath" : "/alarchenko/MyAPI/1.0.0",
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/users" : {
+      "post" : {
+        "summary" : "Returns a user by ID",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful response",
+            "schema" : {
+              "$ref" : "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}" : {
+      "get" : {
+        "summary" : "Returns a user by ID",
+        "parameters" : [ {
+          "name" : "userId",
+          "type" : "integer",
+          "in" : "path",
+          "required" : true,
+          "description" : "The ID of the user to return"
+        } ],
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful response",
+            "schema" : {
+              "$ref" : "#/definitions/User"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "User" : {
+      "type" : "object",
+      "required" : [ "id" ],
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "example" : 123456
+        },
+        "name" : {
+          "type" : "string",
+          "example" : "322"
+        }
+      }
+    }
+  }
+}
