@@ -1,64 +1,481 @@
 {
   "swagger" : "2.0",
   "info" : {
+    "description" : "API FOR DEVELOPERS",
     "version" : "1.0.0",
-    "title" : "my sample api",
-    "description" : "description"
+    "title" : "EzTexting API2",
+    "contact" : {
+      "email" : "ez-dev@callfire.com"
+    },
+    "license" : {
+      "name" : "TERMS OF SERVICE",
+      "url" : "https://www.eztexting.com/terms"
+    }
   },
   "host" : "virtserver.swaggerhub.com",
-  "basePath" : "/alarchenko/MyAPI/1.0.0",
   "schemes" : [ "https" ],
-  "paths" : {
-    "/users" : {
-      "post" : {
-        "summary" : "Returns a user by ID",
-        "produces" : [ "application/json" ],
-        "responses" : {
-          "200" : {
-            "description" : "Revert change from site",
-            "schema" : {
-              "$ref" : "#/definitions/User"
+  "definitions" : {
+    "ProfileItem" : {
+      "type" : "object",
+      "required" : [ "id", "email", "firstName", "lastName", "phoneNumber", "timezonepkey", "userName" ],
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "example" : 111
+        },
+        "email" : {
+          "type" : "string",
+          "format" : "email",
+          "example" : "johndou@email.com"
+        },
+        "firstName" : {
+          "type" : "string",
+          "example" : "John"
+        },
+        "lastName" : {
+          "type" : "string",
+          "example" : "Dou"
+        },
+        "phoneNumber" : {
+          "type" : "string",
+          "example" : 1112223344
+        },
+        "timezonepkey" : {
+          "type" : "integer",
+          "example" : 2
+        },
+        "AccountCountryID" : {
+          "type" : "integer",
+          "example" : 1
+        },
+        "userName" : {
+          "type" : "string",
+          "example" : "johndou"
+        }
+      }
+    },
+    "ProfileSettings" : {
+      "type" : "object",
+      "required" : [ "id", "ExpressOnly", "NotifyLowCredits", "LevelLowCredits", "AutoBuyCredits", "AutoBuyCreditsLevel", "AutoBuyAmountCredits" ],
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "example" : 111
+        },
+        "ExpressOnly" : {
+          "type" : "integer",
+          "example" : 0
+        },
+        "NotifyLowCredits" : {
+          "type" : "integer",
+          "example" : 1
+        },
+        "LevelLowCredits" : {
+          "type" : "integer",
+          "example" : 150
+        },
+        "AutoBuyCredits" : {
+          "type" : "integer",
+          "example" : 1
+        },
+        "AutoBuyCreditsLevel" : {
+          "type" : "integer",
+          "example" : 100
+        },
+        "AutoBuyAmountCredits" : {
+          "type" : "integer",
+          "example" : 200
+        }
+      }
+    },
+    "DashboardItem" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "example" : "users"
+        },
+        "title" : {
+          "type" : "string",
+          "example" : "Contacts"
+        },
+        "content" : {
+          "type" : "string",
+          "example" : "Add, view and manage your lists of opted-in subscribers with just a few clicks."
+        },
+        "buttons" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : {
+              "title" : {
+                "type" : "string",
+                "example" : "Send Now"
+              },
+              "link" : {
+                "type" : "string",
+                "example" : "/sending/messages/choose-method"
+              },
+              "isSpaLink" : {
+                "type" : "boolean",
+                "example" : true
+              },
+              "isEnabled" : {
+                "type" : "boolean",
+                "example" : true
+              }
             }
           }
         }
       }
     },
-    "/users/{userId}" : {
-      "get" : {
-        "summary" : "Returns a user by ID",
-        "parameters" : [ {
-          "name" : "userId",
+    "QrItem" : {
+      "type" : "object",
+      "properties" : {
+        "imageHash" : {
+          "type" : "string",
+          "example" : "iVBORw0KGgoAAAANSUhEUgAAAPoAAAD6AQMAAACyIsh+AAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA90lEQVRoge3YyxGEMAgGYBwLSSlpPaVYiBPWAHm46mlX9PBzcDLk88SEoEQtAjNnopl5pdMA+BGUvGxti4UMRE2uAL4g27MsJstH2YoADwJJRoAXgNEAPABaE9ODo8U67XIAN4MWWqxWqWMA3Ay4R7ZUHHIJwA9Y46I69I7FigC+gGofW3QhHSzV0RfAEUh+nLVm260B8FewFWKSDz39vpAa1QMC4AZKctxN38UCcAPcI/eXrE1dXO4A94AeQa4MOy+zvQTgCUKtVLgoFoAfOP6P2g9aAI+AkAFeBMahF8AbtCYmo69GIrtWADxBi1KpaTf0RgZwBB8tc7lE4FEQSAAAAABJRU5ErkJggg=="
+        }
+      }
+    },
+    "ShortLinkItem" : {
+      "type" : "object",
+      "required" : [ "originalLink" ],
+      "properties" : {
+        "id" : {
           "type" : "integer",
-          "in" : "path",
+          "minimum" : 1,
+          "readOnly" : true,
+          "example" : 10,
+          "format" : "int64"
+        },
+        "originalLink" : {
+          "type" : "string",
+          "example" : "http://eztexting.com"
+        },
+        "shortLink" : {
+          "type" : "string",
+          "example" : "http://clk2.it/uWZaKb"
+        },
+        "dateCreated" : {
+          "type" : "string",
+          "example" : "04-19-2017 5:03 AM",
+          "readOnly" : true
+        },
+        "views" : {
+          "type" : "integer",
+          "minimum" : 0,
+          "readOnly" : true,
+          "format" : "int64"
+        }
+      }
+    },
+    "CarrierLookupPreview" : {
+      "type" : "object",
+      "properties" : {
+        "SendResultTo" : {
+          "type" : "string",
+          "example" : "email@email.com"
+        },
+        "TotalPhoneNumbers" : {
+          "type" : "integer",
+          "minimum" : 0,
+          "format" : "int64",
+          "example" : 10
+        },
+        "RequiredCredits" : {
+          "type" : "integer",
+          "minimum" : 0,
+          "format" : "int64",
+          "example" : 10
+        }
+      }
+    }
+  },
+  "paths" : {
+    "/profile" : {
+      "get" : {
+        "tags" : [ "Profile" ],
+        "summary" : "profile data",
+        "operationId" : "profileData",
+        "description" : "Returns profile data",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "userId",
+          "description" : "TODO get by token (temporary for test)",
           "required" : true,
-          "description" : "The ID of the user to return"
+          "type" : "integer"
         } ],
+        "responses" : {
+          "200" : {
+            "description" : "search results matching criteria",
+            "schema" : {
+              "$ref" : "#/definitions/ProfileItem"
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/profile/settings" : {
+      "get" : {
+        "tags" : [ "Profile" ],
+        "summary" : "profile settings data",
+        "operationId" : "profileSettingsData",
+        "description" : "Returns profile settings data",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "userId",
+          "description" : "TODO get by token (temporary for test)",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "search results matching criteria",
+            "schema" : {
+              "$ref" : "#/definitions/ProfileSettings"
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/profile/update/info" : {
+      "post" : {
+        "tags" : [ "Profile" ],
+        "summary" : "update profile data",
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
-            "description" : "Successful response",
+            "description" : "update is successfull"
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/profile/update/password" : {
+      "post" : {
+        "tags" : [ "Profile" ],
+        "summary" : "update password data",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "update is successfull"
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/profile/update/settings" : {
+      "post" : {
+        "tags" : [ "Profile" ],
+        "summary" : "update settings data",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "update is successfull"
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/message/test" : {
+      "post" : {
+        "tags" : [ "Message" ],
+        "summary" : "test message delivery",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "update is successfull"
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/dashboard" : {
+      "get" : {
+        "tags" : [ "Dashboard" ],
+        "summary" : "dashborad data",
+        "operationId" : "dashboradData",
+        "description" : "Returns dashborad data",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "dashborad data",
             "schema" : {
-              "$ref" : "#/definitions/User"
+              "type" : "object",
+              "properties" : {
+                "_links" : {
+                  "type" : "object"
+                },
+                "_embedded" : {
+                  "type" : "object",
+                  "properties" : {
+                    "entities" : {
+                      "type" : "array",
+                      "items" : {
+                        "$ref" : "#/definitions/DashboardItem"
+                      }
+                    }
+                  }
+                }
+              }
             }
+          }
+        }
+      }
+    },
+    "/qr/generate" : {
+      "post" : {
+        "tags" : [ "QR" ],
+        "summary" : "qr data",
+        "operationId" : "qrData",
+        "description" : "Returns qr data",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "qr data",
+            "schema" : {
+              "$ref" : "#/definitions/QrItem"
+            }
+          }
+        }
+      }
+    },
+    "/link-shortener" : {
+      "get" : {
+        "tags" : [ "Link Shortener" ],
+        "summary" : "short links list",
+        "operationId" : "shortLintData",
+        "description" : "Returns short links list",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "short links list",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "_links" : {
+                  "type" : "object"
+                },
+                "_embedded" : {
+                  "type" : "object",
+                  "properties" : {
+                    "entities" : {
+                      "type" : "array",
+                      "minItems" : 0,
+                      "items" : {
+                        "$ref" : "#/definitions/ShortLinkItem"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Link Shortener" ],
+        "summary" : "create a short link",
+        "operationId" : "linkData",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "201" : {
+            "description" : "short link created",
+            "schema" : {
+              "$ref" : "#/definitions/ShortLinkItem"
+            }
+          }
+        }
+      }
+    },
+    "/link-shortener/{id}" : {
+      "delete" : {
+        "tags" : [ "Link Shortener" ],
+        "summary" : "delete a short link",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "operationId" : "linkItemDelete",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "short link deleted"
+          }
+        }
+      }
+    },
+    "/media" : {
+      "post" : {
+        "tags" : [ "Media" ],
+        "summary" : "Upload media file",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "201" : {
+            "description" : "item saved"
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/carrier-lookup" : {
+      "post" : {
+        "tags" : [ "Carrier Lookup" ],
+        "summary" : "Submit carrier lookup",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "201" : {
+            "description" : "item saved",
+            "schema" : {
+              "$ref" : "#/definitions/CarrierLookupPreview"
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/carrier-lookup/preview" : {
+      "post" : {
+        "tags" : [ "Carrier Lookup" ],
+        "summary" : "Preview carrier lookup",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "201" : {
+            "description" : "item saved",
+            "schema" : {
+              "$ref" : "#/definitions/CarrierLookupPreview"
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
           }
         }
       }
     }
   },
-  "definitions" : {
-    "User" : {
-      "type" : "object",
-      "required" : [ "id" ],
-      "properties" : {
-        "id" : {
-          "type" : "integer",
-          "example" : 123456
-        },
-        "name" : {
-          "type" : "string",
-          "example" : "322"
-        }
-      }
-    }
-  }
+  "basePath" : "/alarchenko/MyAPI/1.0.0"
 }
