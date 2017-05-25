@@ -190,6 +190,51 @@
           "example" : 10
         }
       }
+    },
+    "ReferralInvitation" : {
+      "type" : "object",
+      "properties" : {
+        "_links" : {
+          "type" : "object",
+          "properties" : {
+            "self" : {
+              "type" : "object",
+              "properties" : {
+                "href" : {
+                  "type" : "string",
+                  "example" : "/links-self-href-example"
+                }
+              }
+            }
+          }
+        },
+        "id" : {
+          "type" : "integer",
+          "example" : 1
+        },
+        "CreatedAt" : {
+          "type" : "string",
+          "format" : "date",
+          "example" : "10.04.2017"
+        },
+        "Src" : {
+          "type" : "integer",
+          "example" : 1
+        },
+        "Status" : {
+          "type" : "integer",
+          "example" : 2
+        },
+        "Email" : {
+          "type" : "string",
+          "format" : "email",
+          "example" : "test@test.com"
+        },
+        "StatusDescription" : {
+          "type" : "string",
+          "example" : "this guy is awaiting purchase"
+        }
+      }
     }
   },
   "paths" : {
@@ -472,6 +517,210 @@
           },
           "400" : {
             "description" : "bad input parameter"
+          }
+        }
+      }
+    },
+    "/referral/settings" : {
+      "get" : {
+        "tags" : [ "Refer A Friend" ],
+        "summary" : "referral settings",
+        "operationId" : "referralSettings",
+        "description" : "Returns referral settings",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "referral settings for current user",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "inviteCredit" : {
+                  "type" : "integer",
+                  "example" : 5
+                },
+                "availableInviteCount" : {
+                  "type" : "integer",
+                  "example" : 5
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad request"
+          }
+        }
+      }
+    },
+    "/referral/invitations" : {
+      "get" : {
+        "tags" : [ "Refer A Friend" ],
+        "summary" : "referral invitations",
+        "operationId" : "referralInvitationsGet",
+        "description" : "Returns referral invitations",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "invitations for current user",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "properties" : {
+                  "_links" : {
+                    "$ref" : "#/definitions/ReferralInvitation/properties/_links"
+                  },
+                  "currentPage" : {
+                    "type" : "integer",
+                    "example" : 1
+                  },
+                  "total" : {
+                    "type" : "integer",
+                    "example" : 3
+                  },
+                  "pageSize" : {
+                    "type" : "integer",
+                    "example" : 10
+                  },
+                  "_embedded" : {
+                    "type" : "object",
+                    "properties" : {
+                      "entities" : {
+                        "type" : "array",
+                        "items" : {
+                          "$ref" : "#/definitions/ReferralInvitation"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad request"
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Refer A Friend" ],
+        "summary" : "create new referral invitations",
+        "operationId" : "referralInvitationsPost",
+        "description" : "Creates referral invitations",
+        "parameters" : [ {
+          "name" : "emails",
+          "in" : "body",
+          "schema" : {
+            "type" : "array",
+            "description" : "list of emails for invitations",
+            "items" : {
+              "type" : "string",
+              "format" : "email"
+            }
+          }
+        } ],
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "amount of created invitations",
+            "schema" : {
+              "type" : "number",
+              "example" : 1
+            }
+          },
+          "400" : {
+            "description" : "bad request"
+          }
+        }
+      }
+    },
+    "/referral/contacts" : {
+      "get" : {
+        "tags" : [ "Refer A Friend" ],
+        "summary" : "referral contacts",
+        "operationId" : "referralContacts",
+        "description" : "Returns contacts from provided email account",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "email",
+          "in" : "query",
+          "description" : "Email address to retrieve contacts from",
+          "type" : "string",
+          "format" : "email"
+        }, {
+          "name" : "password",
+          "in" : "query",
+          "type" : "string",
+          "description" : "password from email account"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "contacts from email",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "_embedded" : {
+                  "type" : "object",
+                  "properties" : {
+                    "entities" : {
+                      "type" : "array",
+                      "items" : {
+                        "type" : "object",
+                        "properties" : {
+                          "name" : {
+                            "type" : "string",
+                            "example" : "test"
+                          },
+                          "email" : {
+                            "type" : "string",
+                            "format" : "email",
+                            "example" : "test@test.com"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad request"
+          }
+        }
+      }
+    },
+    "/referral/invitations/existing" : {
+      "post" : {
+        "tags" : [ "Refer A Friend" ],
+        "summary" : "check if invitations already exist",
+        "operationId" : "referralInvitationsExisting",
+        "description" : "Returns those contacts from provided collection, which have already registered invitation in PrivateLabel scope",
+        "parameters" : [ {
+          "name" : "emails",
+          "in" : "body",
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "format" : "email"
+            }
+          }
+        } ],
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "invitations from provided collection, which have already registered invitation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string",
+                "format" : "email",
+                "example" : "test@test.com"
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad request"
           }
         }
       }
