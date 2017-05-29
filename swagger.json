@@ -15,6 +15,43 @@
   "host" : "virtserver.swaggerhub.com",
   "schemes" : [ "https" ],
   "definitions" : {
+    "DefaultError" : {
+      "type" : "object",
+      "properties" : {
+        "type" : {
+          "type" : "string"
+        },
+        "detail" : {
+          "type" : "string",
+          "example" : "The request you made is incorrect"
+        },
+        "status" : {
+          "type" : "integer",
+          "example" : 400
+        },
+        "title" : {
+          "type" : "string",
+          "example" : "Bad Request"
+        },
+        "errors" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "required" : [ "title", "message" ],
+            "properties" : {
+              "title" : {
+                "type" : "string",
+                "example" : "Error"
+              },
+              "message" : {
+                "type" : "string",
+                "example" : "Bad Request"
+              }
+            }
+          }
+        }
+      }
+    },
     "ProfileItem" : {
       "type" : "object",
       "required" : [ "id", "email", "firstName", "lastName", "phoneNumber", "timezonepkey", "userName" ],
@@ -212,28 +249,59 @@
           "type" : "integer",
           "example" : 1
         },
-        "CreatedAt" : {
+        "createdAt" : {
           "type" : "string",
           "format" : "date",
           "example" : "10.04.2017"
         },
-        "Src" : {
+        "src" : {
           "type" : "integer",
           "example" : 1
         },
-        "Status" : {
+        "status" : {
           "type" : "integer",
           "example" : 2
         },
-        "Email" : {
+        "email" : {
           "type" : "string",
           "format" : "email",
           "example" : "test@test.com"
         },
-        "StatusDescription" : {
+        "statusDescription" : {
           "type" : "string",
           "example" : "this guy is awaiting purchase"
         }
+      }
+    },
+    "MessageForwardingSettings" : {
+      "type" : "object",
+      "properties" : {
+        "allowForwarding" : {
+          "type" : "boolean",
+          "example" : true
+        },
+        "forwardingEmails" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "example" : "test@test.com"
+          }
+        },
+        "forwardingPhones" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "example" : 2234567890
+          }
+        }
+      }
+    }
+  },
+  "responses" : {
+    "400Default" : {
+      "description" : "Bad Request",
+      "schema" : {
+        "$ref" : "#/definitions/DefaultError"
       }
     }
   },
@@ -546,7 +614,7 @@
             }
           },
           "400" : {
-            "description" : "bad request"
+            "$ref" : "#/responses/400Default"
           }
         }
       }
@@ -597,7 +665,7 @@
             }
           },
           "400" : {
-            "description" : "bad request"
+            "$ref" : "#/responses/400Default"
           }
         }
       },
@@ -628,7 +696,7 @@
             }
           },
           "400" : {
-            "description" : "bad request"
+            "$ref" : "#/responses/400Default"
           }
         }
       }
@@ -684,7 +752,7 @@
             }
           },
           "400" : {
-            "description" : "bad request"
+            "$ref" : "#/responses/400Default"
           }
         }
       }
@@ -720,7 +788,110 @@
             }
           },
           "400" : {
-            "description" : "bad request"
+            "$ref" : "#/responses/400Default"
+          }
+        }
+      }
+    },
+    "/contacts/optout/file" : {
+      "post" : {
+        "tags" : [ "Contacts Unsubscribe" ],
+        "summary" : "upload file for contacts optout",
+        "operationId" : "contactsOptoutFile",
+        "description" : "Executes file upload and returns the status of the operation",
+        "consumes" : [ "multipart/form-data" ],
+        "parameters" : [ {
+          "name" : "file",
+          "in" : "formData",
+          "description" : "The uploaded file data",
+          "required" : true,
+          "type" : "file"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "File is uploaded",
+            "schema" : {
+              "type" : "boolean",
+              "example" : true
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400Default"
+          }
+        }
+      }
+    },
+    "/contacts/optout/form" : {
+      "post" : {
+        "tags" : [ "Contacts Unsubscribe" ],
+        "summary" : "post phone numbers for contacts optout",
+        "operationId" : "contactsOptoutForm",
+        "description" : "posts phone sumbers and returns the status of the operation",
+        "parameters" : [ {
+          "name" : "contacts",
+          "in" : "body",
+          "description" : "String containing one or multiple phone numbers",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Task is created",
+            "schema" : {
+              "type" : "boolean",
+              "example" : true
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400Default"
+          }
+        }
+      }
+    },
+    "/message-forwarding" : {
+      "get" : {
+        "tags" : [ "Message Forwarding" ],
+        "summary" : "message forwarding settings",
+        "operationId" : "messageForwardingSettingsGet",
+        "description" : "Returns message forwarding settings",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "message forwarding settings",
+            "schema" : {
+              "$ref" : "#/definitions/MessageForwardingSettings"
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400Default"
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "Message Forwarding" ],
+        "summary" : "message forwarding settings",
+        "operationId" : "messageForwardingSettingsPut",
+        "description" : "Updates message forwarding settings",
+        "parameters" : [ {
+          "name" : "data",
+          "in" : "body",
+          "schema" : {
+            "$ref" : "#/definitions/MessageForwardingSettings"
+          }
+        } ],
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "result of the operation",
+            "schema" : {
+              "type" : "boolean",
+              "example" : true
+            }
+          },
+          "400" : {
+            "$ref" : "#/responses/400Default"
           }
         }
       }
